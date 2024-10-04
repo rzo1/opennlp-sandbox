@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,13 +43,19 @@ public class DefaultLinkerModelTrainingTest extends AbstractCorefTest {
     assertNotNull(modelTrainingDirectory);
     modelTrainingDir = Path.of(modelTrainingDirectory.toURI()).toAbsolutePath().toString();
     // transfer resources to the training directory
-    String pOriginal = modelInputDirectory.toURI().getPath();
-    Path pTraining = Path.of(modelTrainingDirectory.toURI());
-    Files.copy(Path.of(pOriginal, "gen.fem").toAbsolutePath(), pTraining.resolve("gen.fem").toAbsolutePath(),
+    // Convert the URI to a Path for cross-platform compatibility
+    Path modelInputDirPath = Paths.get(modelInputDirectory.toURI());
+    Path modelTrainingDirPath = Paths.get(modelTrainingDirectory.toURI());
+
+    // Transfer resources to the training directory
+    Files.copy(modelInputDirPath.resolve("gen.fem").toAbsolutePath(),
+            modelTrainingDirPath.resolve("gen.fem").toAbsolutePath(),
             StandardCopyOption.REPLACE_EXISTING);
-    Files.copy(Path.of(pOriginal, "gen.mas").toAbsolutePath(), pTraining.resolve("gen.mas").toAbsolutePath(),
+    Files.copy(modelInputDirPath.resolve("gen.mas").toAbsolutePath(),
+            modelTrainingDirPath.resolve("gen.mas").toAbsolutePath(),
             StandardCopyOption.REPLACE_EXISTING);
-    Files.copy(Path.of(pOriginal, "acronyms").toAbsolutePath(), pTraining.resolve("acronyms").toAbsolutePath(),
+    Files.copy(modelInputDirPath.resolve("acronyms").toAbsolutePath(),
+            modelTrainingDirPath.resolve("acronyms").toAbsolutePath(),
             StandardCopyOption.REPLACE_EXISTING);
   }
 
